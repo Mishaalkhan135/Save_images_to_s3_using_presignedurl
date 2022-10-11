@@ -1,34 +1,34 @@
-"use strict";
+import * as AWS from "aws-sdk";
+AWS.config.update({ region: process.env.AWS_REGION });
+const s3 = new AWS.S3();
 
-const AWS = require("aws-sdk");
-const s3 = new AWS.S3({ signatureVersion: "v4" });
+const UploadBucket = process.env.S3_BUCKET;
 
-const bucket = process.env.S3_BUCKET;
-if (!bucket) {
-	throw Error(`S3 bucket not set`);
-}
+// Change this value to adjust the signed URL's expiration
+const URL_EXPIRATION_SECONDS = 300;
 
-exports.handler = async function (event) {
-	try {
-		const key = JSON.parse(event.body)["object_key"];
-		const action = JSON.parse(event.body)["action"];
-		if (!key) {
-			throw Error("S3 object key missing");
-		}
-		if (action !== "putObject" && action !== "getObject") {
-			throw Error("Action not allowed");
-		}
+// Main Lambda entry point
+exports.handler = async (event: any) => {
+	const randomID = Math.random() * 1000000;
+	const Key = `${randomID}.jpg`;
 
-		return {
-			statusCode: 200,
-			headers: { "Content-Type": "text/plain" },
-			body: s3.getSignedUrl(action, {
-				Bucket: bucket,
-				Key: key,
-				Expires: 24 * 60 * 60,
-			}),
-		};
-	} catch (error) {
-		throw Error(`Error in backend: ${error}`);
-	}
+	// Get signed URL from S3
+	const s3Params = {
+		Bucket: UploadBucket,
+		Key,
+		Expires: URL_EXPIRATION_SECONDS,
+		ContentType: "image/jpeg",
+	};
+
+	console.log("Params: ", s3Params);
+	const uploadURL = await s3.getSignedUrlPromise("putObject", s3Params);
+	console.log(uploadURL);
+	const reponse = {
+		uploadURL,
+		Key,
+	};
+	return {
+		statusCode: 200,
+		body: JSON.stringify(reponse),
+	};
 };
