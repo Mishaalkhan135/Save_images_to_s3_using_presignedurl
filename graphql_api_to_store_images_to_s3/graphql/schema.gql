@@ -1,0 +1,26 @@
+type Mutation {
+	"""
+    image mutation
+    """
+	update_user_profile(user_id: String!): PlatformApiResponse!
+}
+
+"""
+response type
+"""
+type PlatformApiResponse {
+	id: String
+	pre_signed_url_object: String
+	success: Success
+	error: Error
+}
+
+type Success {
+	message: String!
+	status_code: Int!
+}
+type Error {
+	message: String!
+	status_code: Int!
+}
+
