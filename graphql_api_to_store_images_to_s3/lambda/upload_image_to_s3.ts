@@ -11,8 +11,8 @@ export default async (user_id: string): Promise<PlatformApiResponse> => {
 			error: {
 				message: "Bad Request: Required data does not exist.",
 				status_code: 400,
-			}
-		}
+			},
+		};
 	}
 	let imagePath: string = `user/profile/${user_id}`;
 
@@ -28,10 +28,11 @@ export default async (user_id: string): Promise<PlatformApiResponse> => {
 	} catch (err) {
 		return {
 			error: {
-				message: "Server Error: Sorry! Something went wrong in uploading profile.",
+				message:
+					"Server Error: Sorry! Something went wrong in uploading profile.",
 				status_code: 400,
-			}
-		}
+			},
+		};
 	}
 };
 
@@ -55,11 +56,11 @@ export function createPresignedPost(
 	//const s3 = new S3();
 
 	const s3 = new S3({
-		endpoint: "s3-website-us-east-1.amazonaws.com",
-		region: "us-east-1",
+		endpoint: "#####",
+		region: "#####",
 		credentials: {
-			accessKeyId: "AKIA3UWGVZZJ5OIMZCBU",
-			secretAccessKey: "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",
+			accessKeyId: "#####",
+			secretAccessKey: "#####",
 		},
 	});
 
